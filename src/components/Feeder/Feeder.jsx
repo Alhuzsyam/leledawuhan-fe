@@ -17,9 +17,10 @@ import {
   Timer,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { SCHEDULE_API_BASE, POOL_API_BASE, buildUrl, createAuthHeaders, logApiCall } from "../../api";
 import Sidebar from "../Sidebar/Sidebar";
 import "./Feeder.css";
-// import imageSrc from '/assets/header.png';
+
 
 const Feeder = () => {
   const [schedules, setSchedules] = useState([]);
@@ -38,10 +39,6 @@ const Feeder = () => {
     code: "",
   });
   const navigate = useNavigate();
-
-  const SCHEDULE_API_BASE =
-    "https://623f0ef0109d.ngrok-free.app/api/schedule";
-  const POOL_API_BASE = "https://623f0ef0109d.ngrok-free.app/api/kolam";
 
   const getUserSpecificKey = (key) => {
     return userSession?.id ? `${key}_user_${userSession.id}` : key;
@@ -135,16 +132,17 @@ const Feeder = () => {
   const fetchPools = async () => {
     if (!userSession?.id || !userSession?.token) return;
     try {
-      const response = await fetch(
-        `${POOL_API_BASE}/select/all?id=${userSession.id}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${userSession.token}`,
-          },
-        }
-      );
+      // Build URL with query parameters using helper function
+      const url = buildUrl(`${POOL_API_BASE}/select/all`, { id: userSession.id });
+      
+      // Log API call for debugging
+      logApiCall('GET', url);
+      
+      const response = await fetch(url, {
+        method: "GET",
+        headers: createAuthHeaders(userSession.token),
+      });
+      
       if (!response.ok)
         throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
@@ -191,17 +189,20 @@ const Feeder = () => {
         code: scheduleCode,
         iduser: userSession.id.toString(),
         schedule: scheduleDateTime,
+        poolCode: selectedPool, // Added pool information
       };
+      
       console.log(
         `Adding schedule for pool ${selectedPool} with data:`,
         requestData
       );
+      
+      // Log API call for debugging
+      logApiCall('POST', `${SCHEDULE_API_BASE}/save`, requestData);
+      
       const response = await fetch(`${SCHEDULE_API_BASE}/save`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${userSession.token}`,
-        },
+        headers: createAuthHeaders(userSession.token),
         body: JSON.stringify(requestData),
       });
       console.log("Add schedule response status:", response.status);
