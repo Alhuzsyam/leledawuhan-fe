@@ -33,8 +33,8 @@ const MicroController = () => {
   const [relayLoading, setRelayLoading] = useState(false);
   const navigate = useNavigate();
 
-  const MICRO_RELAY_API ="https://monitoring.infarm.web.id/servers/api/control/micro/getByCode";
-  const POOL_API_BASE = "https://monitoring.infarm.web.id/servers/api/kolam";
+  const MICRO_RELAY_API ="https://623f0ef0109d.ngrok-free.app/api/control/micro/getByCode";
+  const POOL_API_BASE = "https://623f0ef0109d.ngrok-free.app/api/kolam";
 
   useEffect(() => {
     const session = window.userSession;
@@ -436,7 +436,7 @@ const MicroController = () => {
                             API Endpoint:
                           </p>
                           <code className="text-blue-600 text-xs break-all">
-                            https://api.monitoring.infarm.web.id/api/control/micro/sensors
+                            https://623f0ef0109d.ngrok-free.app/api/control/micro/sensors
                           </code>
                         </div>
                         <div className="bg-white p-3 rounded-lg border border-blue-200">
