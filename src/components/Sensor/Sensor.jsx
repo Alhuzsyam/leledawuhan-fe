@@ -448,8 +448,8 @@ const Sensor = () => {
 
   // API Base URLs
   const SENSOR_API_BASE =
-    "https://monitoring.infarm.web.id/servers/api/monitoring/sensors";
-  const POOL_API_BASE = "https://monitoring.infarm.web.id/servers/api/kolam";
+    "https://623f0ef0109d.ngrok-free.app/api/monitoring/sensors";
+  const POOL_API_BASE = "https://623f0ef0109d.ngrok-free.app/api/kolam";
 
   // Get user session on component mount
   useEffect(() => {
