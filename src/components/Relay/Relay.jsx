@@ -64,8 +64,8 @@ const Relay = () => {
   };
 
   // API Base URLs
-  const RELAY_API_BASE = "https://monitoring.infarm.web.id/servers/api/control";
-  const POOL_API_BASE = "https://monitoring.infarm.web.id/servers/api/kolam";
+  const RELAY_API_BASE = "https://623f0ef0109d.ngrok-free.app/api/control";
+  const POOL_API_BASE = "https://623f0ef0109d.ngrok-free.app/api/kolam";
 
   useEffect(() => {
     const session = window.userSession;
