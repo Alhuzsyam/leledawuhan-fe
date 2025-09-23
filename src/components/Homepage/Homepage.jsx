@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react"
 import { Plus, Power, PowerOff, AlertCircle, CheckCircle, Users, Activity, TrendingUp, Droplets } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import { POOL_API_BASE, POOL_SELECT_ALL, POOL_ADD, POOL_UPDATE_STATUS, buildUrl, createAuthHeaders, logApiCall } from "../../api"
 import Sidebar from "../Sidebar/Sidebar"
 import "./Homepage.css"
 
@@ -17,8 +18,6 @@ const Homepage = () => {
   const [userSession, setUserSession] = useState(null)
   const [sidebarVisible, setSidebarVisible] = useState(true)
   const navigate = useNavigate()
-
-  const API_BASE = "https://623f0ef0109d.ngrok-free.app/api/kolam"
 
   const POOLS_STORAGE_KEY = `pools_user_${userSession?.id || "default"}`
 
@@ -96,15 +95,13 @@ const Homepage = () => {
       const storedPools = loadPoolsFromStorage()
       console.log("Loaded pools from localStorage for user:", userSession.id)
 
+      logApiCall("GET", "fetchPools")
       console.log("Fetching pools from API:")
-      const url = `${API_BASE}/select/all?id=${userSession.id}`
+      const url = buildUrl(POOL_SELECT_ALL, { id: userSession.id })
       console.log("Fetching pools from:", url)
       const response = await fetch(url, {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${userSession.token}`,
-        },
+        headers: createAuthHeaders(userSession.token),
       })
 
       console.log("Response status:", response.status)
@@ -201,12 +198,10 @@ const Homepage = () => {
         status: true,
       }
       console.log("Adding pool with data:", requestData)
-      const response = await fetch(`${API_BASE}/add`, {
+      logApiCall("POST", POOL_ADD, requestData)
+      const response = await fetch(POOL_ADD, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${userSession.token}`,
-        },
+        headers: createAuthHeaders(userSession.token),
         body: JSON.stringify(requestData),
       })
       console.log("Add pool response status:", response.status)
@@ -253,12 +248,11 @@ const Homepage = () => {
           }
 
           console.log("Updating pool status:", { code: pool.code, val: activate, id: pool.id })
-          const response = await fetch(`${API_BASE}/updatestatus?code=${pool.code}&val=${activate}&id=${pool.id}`, {
+          const url = buildUrl(POOL_UPDATE_STATUS, { code: pool.code, val: activate, id: pool.id })
+          logApiCall("PUT", url)
+          const response = await fetch(url, {
             method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${userSession.token}`,
-            },
+            headers: createAuthHeaders(userSession.token),
           })
 
           if (!response.ok) {
@@ -317,12 +311,11 @@ const Homepage = () => {
     try {
       setApiLoading(true)
       console.log("Toggling pool status:", { pool, newStatus })
-      const response = await fetch(`${API_BASE}/updatestatus?code=${pool.code}&val=${newStatus}&id=${pool.id}`, {
+      const url = buildUrl(POOL_UPDATE_STATUS, { code: pool.code, val: newStatus, id: pool.id })
+      logApiCall("PUT", url)
+      const response = await fetch(url, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${userSession.token}`,
-        },
+        headers: createAuthHeaders(userSession.token),
       })
       console.log("Toggle status response:", response.status)
       if (!response.ok) {
