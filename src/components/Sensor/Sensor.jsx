@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import html2canvas from "html2canvas";
+import { POOL_API_BASE, POOL_SELECT_ALL, SENSOR_API_BASE, SENSOR_LATEST, buildUrl, createAuthHeaders, logApiCall } from "../../api";
 import Sidebar from "../Sidebar/Sidebar";
 import "./Sensor.css";
 // import imageSrc from '/assets/header.png';
@@ -446,11 +447,6 @@ const Sensor = () => {
   const chartRefs = useRef({});
   const navigate = useNavigate();
 
-  // API Base URLs
-  const SENSOR_API_BASE =
-    "https://623f0ef0109d.ngrok-free.app/api/monitoring/sensors";
-  const POOL_API_BASE = "https://623f0ef0109d.ngrok-free.app/api/kolam";
-
   // Get user session on component mount
   useEffect(() => {
     const session = window.userSession;
@@ -467,16 +463,12 @@ const Sensor = () => {
   const fetchPools = async () => {
     if (!userSession?.id || !userSession?.token) return;
     try {
-      const response = await fetch(
-        `${POOL_API_BASE}/select/all?id=${userSession.id}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${userSession.token}`,
-          },
-        }
-      );
+      logApiCall("GET", "fetchPools");
+      const url = buildUrl(POOL_SELECT_ALL, { id: userSession.id });
+      const response = await fetch(url, {
+        method: "GET",
+        headers: createAuthHeaders(userSession.token),
+      });
       if (!response.ok)
         throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
@@ -496,16 +488,12 @@ const Sensor = () => {
     if (!userSession?.id || !userSession?.token || !poolCode) return;
     try {
       setRefreshing(true);
-      const response = await fetch(
-        `${SENSOR_API_BASE}/latest?code=${poolCode}&id=${userSession.id}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${userSession.token}`,
-          },
-        }
-      );
+      const url = buildUrl(SENSOR_LATEST, { code: poolCode, id: userSession.id });
+      logApiCall("GET", url);
+      const response = await fetch(url, {
+        method: "GET",
+        headers: createAuthHeaders(userSession.token),
+      });
       if (!response.ok)
         throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
@@ -529,16 +517,12 @@ const Sensor = () => {
     if (!userSession?.id || !userSession?.token || !poolCode) return;
     try {
       setLoading(true);
-      const response = await fetch(
-        `${SENSOR_API_BASE}?code=${poolCode}&id=${userSession.id}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${userSession.token}`,
-          },
-        }
-      );
+      const url = buildUrl(SENSOR_API_BASE, { code: poolCode, id: userSession.id });
+      logApiCall("GET", url);
+      const response = await fetch(url, {
+        method: "GET",
+        headers: createAuthHeaders(userSession.token),
+      });
       if (!response.ok)
         throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
