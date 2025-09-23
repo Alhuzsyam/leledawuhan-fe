@@ -96,7 +96,7 @@ function Dashboard() {
       console.log("Username:", username)
       console.log("Password:", password)
 
-      const response = await fetch("https://monitoring.infarm.web.id/servers/api/auth/register", {
+      const response = await fetch("https://623f0ef0109d.ngrok-free.app/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -150,7 +150,7 @@ function Dashboard() {
       console.log("Username:", username)
       console.log("Password:", password)
 
-      const response = await fetch("https://monitoring.infarm.web.id/servers/api/auth/login", {
+      const response = await fetch("https://623f0ef0109d.ngrok-free.app/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
