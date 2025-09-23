@@ -40,8 +40,8 @@ const Feeder = () => {
   const navigate = useNavigate();
 
   const SCHEDULE_API_BASE =
-    "https://monitoring.infarm.web.id/servers/api/schedule";
-  const POOL_API_BASE = "https://monitoring.infarm.web.id/servers/api/kolam";
+    "https://623f0ef0109d.ngrok-free.app/api/schedule";
+  const POOL_API_BASE = "https://623f0ef0109d.ngrok-free.app/api/kolam";
 
   const getUserSpecificKey = (key) => {
     return userSession?.id ? `${key}_user_${userSession.id}` : key;
