@@ -14,6 +14,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { POOL_API_BASE, POOL_SELECT_ALL, RELAY_ALL, RELAY_SAVE, RELAY_UPDATE, buildUrl, createAuthHeaders, logApiCall } from "../../api";
 import Sidebar from "../Sidebar/Sidebar";
 import "./Relay.css";
 // import imageSrc from '/assets/header.png';
@@ -63,10 +64,6 @@ const Relay = () => {
     }
   };
 
-  // API Base URLs
-  const RELAY_API_BASE = "https://623f0ef0109d.ngrok-free.app/api/control";
-  const POOL_API_BASE = "https://623f0ef0109d.ngrok-free.app/api/kolam";
-
   useEffect(() => {
     const session = window.userSession;
     if (session) {
@@ -89,14 +86,12 @@ const Relay = () => {
       return;
     }
     try {
-      const url = `${POOL_API_BASE}/select/all?id=${userSession.id}`;
+      logApiCall("GET", "fetchPools");
+      const url = buildUrl(POOL_SELECT_ALL, { id: userSession.id });
       console.log("Fetching pools from:", url);
       const response = await fetch(url, {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${userSession.token}`,
-        },
+        headers: createAuthHeaders(userSession.token),
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -122,14 +117,12 @@ const Relay = () => {
     try {
       setLoading(true);
       console.log("Fetching relays from server...");
-      const url = `${RELAY_API_BASE}/relay/all?id=${userSession.id}`;
+      logApiCall("GET", "fetchRelays");
+      const url = buildUrl(RELAY_ALL, { id: userSession.id });
       console.log("Fetching relays from:", url);
       const response = await fetch(url, {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${userSession.token}`,
-        },
+        headers: createAuthHeaders(userSession.token),
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -240,12 +233,10 @@ const Relay = () => {
         iduser: userSession.id.toString(),
       };
       console.log("Adding relay with data:", requestData);
-      const response = await fetch(`${RELAY_API_BASE}/save`, {
+      logApiCall("POST", RELAY_SAVE, requestData);
+      const response = await fetch(RELAY_SAVE, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${userSession.token}`,
-        },
+        headers: createAuthHeaders(userSession.token),
         body: JSON.stringify(requestData),
       });
       console.log("Add relay response status:", response.status);
@@ -288,16 +279,12 @@ const Relay = () => {
         relayId,
         userId: userSession.id,
       });
-      const response = await fetch(
-        `${RELAY_API_BASE}/updateValByCode?code=${code}&val=${val}&id=${userSession.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${userSession.token}`,
-          },
-        }
-      );
+      const url = buildUrl(RELAY_UPDATE, { code, val, id: userSession.id });
+      logApiCall("PUT", url);
+      const response = await fetch(url, {
+        method: "PUT",
+        headers: createAuthHeaders(userSession.token),
+      });
       console.log("Update relay response status:", response.status);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
