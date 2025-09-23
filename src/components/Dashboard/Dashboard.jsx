@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { AUTH_LOGIN, AUTH_REGISTER, logApiCall } from "../../api"
 import "./Dashboard.css"
 
 function Dashboard() {
@@ -96,7 +97,10 @@ function Dashboard() {
       console.log("Username:", username)
       console.log("Password:", password)
 
-      const response = await fetch("https://623f0ef0109d.ngrok-free.app/api/auth/register", {
+      // Log API call for debugging
+      logApiCall('POST', AUTH_REGISTER, { username, password: '***' });
+
+      const response = await fetch(AUTH_REGISTER, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -150,7 +154,10 @@ function Dashboard() {
       console.log("Username:", username)
       console.log("Password:", password)
 
-      const response = await fetch("https://623f0ef0109d.ngrok-free.app/api/auth/login", {
+      // Log API call for debugging
+      logApiCall('POST', AUTH_LOGIN, { username, password: '***' });
+
+      const response = await fetch(AUTH_LOGIN, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
