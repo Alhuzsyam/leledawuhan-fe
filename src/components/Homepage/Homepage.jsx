@@ -18,7 +18,7 @@ const Homepage = () => {
   const [sidebarVisible, setSidebarVisible] = useState(true)
   const navigate = useNavigate()
 
-  const API_BASE = "https://monitoring.infarm.web.id/servers/api/kolam"
+  const API_BASE = "https://623f0ef0109d.ngrok-free.app/api/kolam"
 
   const POOLS_STORAGE_KEY = `pools_user_${userSession?.id || "default"}`
 
