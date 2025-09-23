@@ -17,6 +17,7 @@ import {
   Code,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { POOL_API_BASE, POOL_SELECT_ALL, MICRO_GET_BY_CODE, MICRO_SENSORS, buildUrl, createAuthHeaders, logApiCall } from "../../api";
 import Sidebar from "../Sidebar/Sidebar";
 import "./MicroController.css";
 
@@ -32,9 +33,6 @@ const MicroController = () => {
   const [relayData, setRelayData] = useState(null);
   const [relayLoading, setRelayLoading] = useState(false);
   const navigate = useNavigate();
-
-  const MICRO_RELAY_API ="https://623f0ef0109d.ngrok-free.app/api/control/micro/getByCode";
-  const POOL_API_BASE = "https://623f0ef0109d.ngrok-free.app/api/kolam";
 
   useEffect(() => {
     const session = window.userSession;
@@ -55,16 +53,12 @@ const MicroController = () => {
   const fetchPools = async () => {
     if (!userSession?.id || !userSession?.token) return;
     try {
-      const response = await fetch(
-        `${POOL_API_BASE}/select/all?id=${userSession.id}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${userSession.token}`,
-          },
-        }
-      );
+      logApiCall("GET", "fetchPools");
+      const url = buildUrl(POOL_SELECT_ALL, { id: userSession.id });
+      const response = await fetch(url, {
+        method: "GET",
+        headers: createAuthHeaders(userSession.token),
+      });
       if (!response.ok)
         throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
@@ -92,14 +86,12 @@ const MicroController = () => {
     try {
       setRelayLoading(true);
       setConnectionStatus("connecting");
-      const url = `${MICRO_RELAY_API}?code=${selectedPool}&iduser=${userSession.id}`;
+      const url = buildUrl(MICRO_GET_BY_CODE, { code: selectedPool, iduser: userSession.id });
       console.log("Getting relay status from:", url);
+      logApiCall("GET", url);
       const response = await fetch(url, {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${userSession.token}`,
-        },
+        headers: createAuthHeaders(userSession.token),
       });
       console.log("Relay response status:", response.status);
       if (!response.ok) {
@@ -436,7 +428,7 @@ const MicroController = () => {
                             API Endpoint:
                           </p>
                           <code className="text-blue-600 text-xs break-all">
-                            https://623f0ef0109d.ngrok-free.app/api/control/micro/sensors
+                            {MICRO_SENSORS}
                           </code>
                         </div>
                         <div className="bg-white p-3 rounded-lg border border-blue-200">
