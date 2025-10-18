@@ -3,7 +3,8 @@
 // ====================================
 
 // Base API URL from environment variables
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://43.165.193.249:8089/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://monitoring.infarm.web.id/api';
+
 
 // ====================================
 // AUTHENTICATION ENDPOINTS
