@@ -8,7 +8,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://43.165.198.49:8089', 
+        // target: 'http://43.165.198.49:8089', 
+        target: 'https://monitoring.infarm.web.id/', 
         changeOrigin: true, 
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
